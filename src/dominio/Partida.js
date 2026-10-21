@@ -99,21 +99,26 @@ export class Partida {
     return this.#inferencias.estadoDe(piso)
   }
 
-  iniciar() {
-    const pisoCritico = this.#generarPisoCritico(this.#edificio.totalPisos)
-    if (!this.#edificio.esPisoValido(pisoCritico)) {
-      throw new RangeError(`Piso crítico fuera del edificio: ${pisoCritico}`)
+  // RF-06: `pisoCritico` fija F (entero en [1, totalPisos]); si se omite, F es aleatorio (RN-07, V1).
+  iniciar({ pisoCritico } = {}) {
+    const fijado = pisoCritico !== undefined
+    const f = fijado ? pisoCritico : this.#generarPisoCritico(this.#edificio.totalPisos)
+    if (!this.#edificio.esPisoValido(f)) {
+      const origen = fijado ? 'configurado' : 'generado'
+      throw new RangeError(
+        `Piso crítico ${origen} fuera del edificio (1 a ${this.#edificio.totalPisos}): ${String(f)}`,
+      )
     }
-    this.#pisoCritico = pisoCritico
+    this.#pisoCritico = f
     this.#restablecerRecursos()
     this.#estado = ESTADO_PARTIDA.EN_CURSO
   }
 
-  reiniciar({ confirmado = false } = {}) {
+  reiniciar({ confirmado = false, pisoCritico } = {}) {
     if (this.requiereConfirmacionParaReiniciar && !confirmado) {
       return { reiniciada: false, requiereConfirmacion: true }
     }
-    this.iniciar()
+    this.iniciar({ pisoCritico })
     return { reiniciada: true, requiereConfirmacion: false }
   }
 
