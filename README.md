@@ -14,7 +14,7 @@ encontrarlo en un máximo de **14 lanzamientos** en el peor caso.
 | V2 — Estrategias | Piso crítico configurable, secuencial y saltos de 10, historial, comparación | RF-06 a RF-10, RF-21 |
 | V3 — Optimización | Estrategia óptima, análisis del peor caso, explicación de los 14 lanzamientos | RF-11 a RF-16, RNF-01 a RNF-03 |
 
-Cada versión corresponde a un **milestone**. El trabajo se gestiona con **GitHub Issues** y el tablero del proyecto.
+Cada versión corresponde a un **milestone**. El trabajo se gestiona con **GitHub Issues** y el [tablero del proyecto](https://github.com/users/DanMeraDev/projects/4).
 
 ## Equipo y herramientas
 
