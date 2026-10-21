@@ -1,0 +1,497 @@
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Barra superior */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--barra);
+  color: #fff;
+}
+
+.barra__titulo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.barra h1 {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.barra__modo {
+  color: #cbd5e1;
+}
+
+.barra__version {
+  padding: 0.2rem 0.8rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.14);
+  font-size: 0.85rem;
+}
+
+.barra__logo,
+.huevo {
+  display: inline-block;
+  width: 16px;
+  height: 21px;
+  border: 1.5px solid #b8a077;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: #f7ecd6;
+}
+
+/* Botones y campos */
+.boton {
+  padding: 0.6rem 1.25rem;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: #e4e8ed;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition:
+    filter 0.15s,
+    box-shadow 0.15s;
+}
+
+.boton:hover:not(:disabled) {
+  filter: brightness(0.95);
+}
+
+.boton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boton--primario {
+  border-color: var(--primario-borde);
+  background: var(--primario);
+  font-weight: 600;
+}
+
+.boton--sugerido {
+  border-color: var(--seguro-borde);
+  box-shadow: 0 0 0 3px rgb(63 157 74 / 0.35);
+  font-weight: 600;
+}
+
+.boton--peligro {
+  border-color: var(--rotura-borde);
+  background: var(--rotura);
+  font-weight: 600;
+}
+
+.boton--grande {
+  padding: 0.8rem 2rem;
+  font-size: 1.2rem;
+}
+
+.boton:focus-visible,
+.piso:focus-visible,
+.campo input:focus-visible,
+.ayuda summary:focus-visible {
+  outline: 3px solid var(--enfasis);
+  outline-offset: 2px;
+}
+
+.campo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.campo label {
+  font-size: 1.05rem;
+}
+
+.campo input {
+  width: 6.5rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 1.15rem;
+  text-align: center;
+}
+
+.campo input[aria-invalid='true'] {
+  border-color: var(--rotura-borde);
+}
+
+/* Ayuda e instrucciones */
+.ayuda {
+  width: min(1200px, 100% - 3rem);
+  margin: 1rem auto 0;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radio);
+  background: var(--panel);
+  box-shadow: var(--sombra);
+}
+
+.ayuda summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.ayuda[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+.instrucciones {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.instrucciones h3 {
+  margin-top: 0.4rem;
+  font-size: 1rem;
+}
+
+.instrucciones ul,
+.instrucciones ol {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.texto-seguro {
+  color: var(--seguro-borde);
+  font-weight: 600;
+}
+
+.texto-rotura {
+  color: var(--rotura-borde);
+  font-weight: 600;
+}
+
+/* Pantalla de inicio */
+.inicio {
+  width: min(760px, 100% - 2rem);
+  margin: 2.5rem auto;
+  padding: 2rem;
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+  border-radius: var(--radio);
+  background: var(--panel);
+  box-shadow: var(--sombra);
+}
+
+.inicio h2 {
+  font-size: 1.5rem;
+}
+
+.inicio__intro {
+  color: var(--texto-suave);
+}
+
+/* Simulación: tres columnas como en el wireframe de V1 */
+.simulacion {
+  width: min(1200px, 100% - 3rem);
+  margin: 1rem auto 2rem;
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(320px, 1fr) minmax(280px, 340px);
+  align-items: start;
+  gap: 1.25rem;
+}
+
+@media (max-width: 960px) {
+  .simulacion {
+    grid-template-columns: 1fr;
+  }
+}
+
+.columna {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.panel {
+  padding: 1rem 1.25rem 1.25rem;
+  border-radius: var(--radio);
+  background: var(--panel);
+  box-shadow: var(--sombra);
+}
+
+.panel > h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+/* Torre de pisos */
+.torre__pisos {
+  max-height: min(62vh, 560px);
+  margin: 0;
+  padding: 0.4rem;
+  display: grid;
+  gap: 4px;
+  overflow-y: auto;
+  list-style: none;
+  border-radius: 10px;
+  background: #e6eaef;
+}
+
+.piso {
+  position: relative;
+  width: 100%;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid var(--desconocido-borde);
+  border-radius: 7px;
+  background: var(--desconocido);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.piso:disabled {
+  cursor: default;
+}
+
+.piso::after {
+  position: absolute;
+  right: 0.6rem;
+  font-weight: 700;
+}
+
+/* Muestra de la leyenda: comparte colores con los pisos, por eso va antes de las reglas de estado. */
+.muestra {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--desconocido-borde);
+  border-radius: 8px;
+  background: var(--desconocido);
+  font-weight: 700;
+}
+
+.piso[data-estado='seguro'],
+.muestra--seguro {
+  border-color: var(--seguro-borde);
+  background: var(--seguro);
+}
+
+.piso[data-estado='rotura'],
+.muestra--rotura {
+  border-color: var(--rotura-borde);
+  background: var(--rotura);
+}
+
+/* Símbolos además del color, para no depender solo de él */
+.piso[data-estado='seguro']::after,
+.muestra--seguro::after {
+  content: '✓';
+}
+
+.piso[data-estado='rotura']::after,
+.muestra--rotura::after {
+  content: '✕';
+}
+
+.piso[aria-pressed='true'] {
+  box-shadow: inset 0 0 0 3px var(--enfasis);
+  font-weight: 700;
+}
+
+/* Estado */
+.estado {
+  margin: 0 0 1rem;
+  padding: 0.75rem 1rem;
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.estado__fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.estado dt {
+  color: var(--texto-suave);
+}
+
+.estado dd {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.huevos {
+  display: inline-flex;
+  gap: 0.3rem;
+}
+
+.huevo--roto {
+  border-style: dashed;
+  border-color: var(--rotura-borde);
+  background: repeating-linear-gradient(135deg, #f3d7d7 0 3px, #fff 3px 6px);
+}
+
+/* Controles y mensajes */
+.controles {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mensaje {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-left: 5px solid #94a3b8;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.mensaje--seguro {
+  border-color: var(--seguro-borde);
+  background: #eef9ef;
+}
+
+.mensaje--rotura {
+  border-color: var(--rotura-borde);
+  background: #fdf0f0;
+}
+
+.mensaje--aviso {
+  border-color: var(--aviso-borde);
+  background: var(--aviso);
+}
+
+.mensaje--error {
+  border-color: #b42318;
+  background: #fdeceb;
+}
+
+.mensaje--exito {
+  border-color: #16803c;
+  background: #ddf7e6;
+  font-weight: 600;
+}
+
+/* Leyenda */
+.leyenda {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.leyenda li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.leyenda small {
+  display: block;
+  color: var(--texto-suave);
+}
+
+.nota {
+  margin-top: 0.75rem;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+}
+
+/* Historial */
+.historial {
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.historial table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.historial th {
+  position: sticky;
+  top: 0;
+  padding: 0.45rem 0.5rem;
+  background: var(--barra);
+  color: #fff;
+  font-weight: 600;
+}
+
+.historial td {
+  padding: 0.4rem 0.5rem;
+  border-top: 1px solid #e4e7eb;
+  text-align: center;
+}
+
+.historial tr[data-resultado='se_rompe'] td:last-child {
+  color: var(--rotura-borde);
+  font-weight: 600;
+}
+
+.historial tr[data-resultado='sobrevive'] td:last-child {
+  color: var(--seguro-borde);
+  font-weight: 600;
+}
+
+.historial__vacio {
+  color: var(--texto-suave);
+  font-style: italic;
+}
+
+/* Diálogos */
+.dialogo {
+  width: min(440px, 100% - 2rem);
+  padding: 1.25rem 1.5rem;
+  border: none;
+  border-radius: var(--radio);
+  background: var(--panel);
+  color: var(--texto);
+  box-shadow: 0 12px 32px rgb(15 23 42 / 0.3);
+}
+
+.dialogo::backdrop {
+  background: rgb(15 23 42 / 0.45);
+}
+
+.dialogo h2 {
+  margin-bottom: 0.6rem;
+  font-size: 1.25rem;
+}
+
+.dialogo form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.dialogo__error {
+  color: #b42318;
+  font-weight: 600;
+}
+
+.dialogo__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}

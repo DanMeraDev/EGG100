@@ -1,0 +1,53 @@
+:root {
+  --fondo: #c9d3de;
+  --panel: #f5f7fa;
+  --texto: #1f2933;
+  --texto-suave: #52606d;
+  --borde: #b6c1cd;
+  --barra: #2e3a4b;
+  --primario: #a5c8ff;
+  --primario-borde: #4f7fd1;
+  --enfasis: #1d4ed8;
+  --seguro: #a7e3ab;
+  --seguro-borde: #3f9d4a;
+  --rotura: #f6a5a5;
+  --rotura-borde: #cc4b4b;
+  --desconocido: #dde2e8;
+  --desconocido-borde: #b6c1cd;
+  --aviso: #fff4cc;
+  --aviso-borde: #d9a400;
+  --radio: 14px;
+  --sombra: 0 2px 8px rgb(15 23 42 / 0.12);
+
+  color-scheme: light;
+  font-family: system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.45;
+  color: var(--texto);
+  background: var(--fondo);
+  -webkit-font-smoothing: antialiased;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
