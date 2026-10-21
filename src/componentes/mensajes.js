@@ -1,6 +1,7 @@
 import { RESULTADO } from '../dominio/Lanzamiento.js'
 import { ESTADO_PARTIDA, TIPO_DECLARACION, TIPO_LANZAMIENTO } from '../dominio/Partida.js'
 import { ESTADO_PISO } from '../dominio/RegistroInferencias.js'
+import { nombreEstrategia } from './opciones.js'
 
 // Convierte los resultados del dominio en mensajes explicados para el usuario (RF-18, RNF-01).
 export const TONO = Object.freeze({
@@ -31,6 +32,22 @@ const MENSAJE_PARTIDA_TERMINADA = Object.freeze({
   tono: TONO.AVISO,
   texto: 'La partida ya terminó. Pulsa «Reiniciar» para jugar otra vez.',
 })
+
+const MENSAJE_PARTIDA_EN_CURSO = Object.freeze({
+  tono: TONO.NEUTRO,
+  texto: 'Partida en curso. Selecciona un piso y pulsa «Lanzar».',
+})
+
+export const MENSAJE_INICIAL_ESTRATEGIAS = Object.freeze({
+  tono: TONO.NEUTRO,
+  texto: 'Elige una estrategia, indica el piso crítico y pulsa «Ejecutar».',
+})
+
+// Mensaje al mostrar la simulación manual, también al volver desde otra vista.
+export function mensajeAlMostrarPartida({ estado, intentos }) {
+  if (estado !== ESTADO_PARTIDA.EN_CURSO) return MENSAJE_PARTIDA_TERMINADA
+  return intentos === 0 ? MENSAJE_INICIAL : MENSAJE_PARTIDA_EN_CURSO
+}
 
 const plural = (cantidad, singular, varios) => (cantidad === 1 ? singular : varios)
 
@@ -138,4 +155,20 @@ function explicarError({ piso, evidencia, huevosDisponibles }) {
       : `el huevo se rompió en el piso ${minRotura}, así que F no puede ser mayor que ${minRotura}`
   const siguiente = huevosDisponibles > 0 ? 'Puedes seguir buscando.' : 'Revisa la torre y vuelve a declarar.'
   return `Declaración incorrecta: ${motivo}. ${siguiente}`
+}
+
+// CU-05: resultado de ejecutar una estrategia. `ejecucion` tiene la forma descrita en PantallaEstrategias.
+export function describirEjecucion({ estrategia, lanzamientos, resuelta, pisoIdentificado, huevosRotos }) {
+  const nombre = nombreEstrategia(estrategia)
+  const total = `${lanzamientos.length} ${plural(lanzamientos.length, 'lanzamiento', 'lanzamientos')}`
+  if (!resuelta) {
+    return {
+      tono: TONO.ERROR,
+      texto: `Búsqueda no resuelta: «${nombre}» se quedó sin huevos sin poder determinar F. El historial conserva ${total}.`,
+    }
+  }
+  return {
+    tono: TONO.EXITO,
+    texto: `«${nombre}» identificó el piso crítico ${pisoIdentificado} en ${total}, con ${huevosRotos} ${plural(huevosRotos, 'huevo roto', 'huevos rotos')}.`,
+  }
 }
