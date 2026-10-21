@@ -1,0 +1,33 @@
+name: Tarea de requisito
+description: Implementar un requisito de la SRS EGG100
+labels: ["requisito"]
+body:
+  - type: input
+    id: requisito
+    attributes:
+      label: Requisito
+      placeholder: "RF-01 — Visualización del edificio"
+    validations:
+      required: true
+  - type: textarea
+    id: descripcion
+    attributes:
+      label: Descripción
+    validations:
+      required: true
+  - type: textarea
+    id: criterio
+    attributes:
+      label: Criterio de aceptación
+    validations:
+      required: true
+  - type: input
+    id: prueba
+    attributes:
+      label: Caso de prueba
+      placeholder: "CP-01"
+  - type: input
+    id: caso_uso
+    attributes:
+      label: Caso de uso
+      placeholder: "CU-02"

@@ -1,0 +1,29 @@
+name: Observación de usuario
+description: Registrar lo que observó un usuario al evaluar un prototipo
+labels: ["observación-usuario"]
+body:
+  - type: dropdown
+    id: version
+    attributes:
+      label: Prototipo evaluado
+      options: ["V1", "V2", "V3"]
+    validations:
+      required: true
+  - type: input
+    id: evaluador
+    attributes:
+      label: Evaluador y fecha
+      placeholder: "Usuario 2 — 2026-10-28"
+    validations:
+      required: true
+  - type: textarea
+    id: observacion
+    attributes:
+      label: Observación (lo que hizo o dijo el usuario, sin interpretar)
+    validations:
+      required: true
+  - type: input
+    id: requisitos
+    attributes:
+      label: Requisito(s) relacionados
+      placeholder: "RF-19"
