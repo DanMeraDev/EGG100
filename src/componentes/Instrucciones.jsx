@@ -7,8 +7,8 @@ export function Instrucciones() {
       <h3>Reglas</h3>
       <ul>
         <li>
-          El edificio tiene {TOTAL_PISOS} pisos y un <strong>piso crítico F</strong> oculto, elegido al azar entre 1 y{' '}
-          {TOTAL_PISOS}.
+          El edificio tiene {TOTAL_PISOS} pisos y un <strong>piso crítico F</strong> oculto: aleatorio entre 1 y{' '}
+          {TOTAL_PISOS} o el que elijas al iniciar.
         </li>
         <li>
           Desde un piso <strong>menor que F</strong> el huevo sobrevive; desde <strong>F o más arriba</strong>, se

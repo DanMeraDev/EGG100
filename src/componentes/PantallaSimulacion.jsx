@@ -9,7 +9,7 @@ import { MensajeEstado } from './MensajeEstado.jsx'
 import {
   describirDeclaracion,
   describirLanzamiento,
-  MENSAJE_INICIAL,
+  mensajeAlMostrarPartida,
   MENSAJE_REINICIO,
   MENSAJE_REINICIO_CANCELADO,
 } from './mensajes.js'
@@ -22,7 +22,8 @@ const DIALOGO = Object.freeze({ DECLARAR: 'declarar', REINICIAR: 'reiniciar' })
 // Pantalla de simulación del prototipo V1 (wireframe "Lanzamiento Manual").
 export function PantallaSimulacion({ partida, lanzar, declarar, reiniciar }) {
   const [pisoSeleccionado, setPisoSeleccionado] = useState('')
-  const [mensaje, setMensaje] = useState(MENSAJE_INICIAL)
+  // Al volver desde «Ejecución de estrategias», el mensaje describe el estado actual de la partida.
+  const [mensaje, setMensaje] = useState(() => mensajeAlMostrarPartida(partida))
   const [dialogo, setDialogo] = useState(null)
 
   const enCurso = partida.estado === ESTADO_PARTIDA.EN_CURSO

@@ -1,9 +1,11 @@
 import { ETIQUETA_RESULTADO } from './etiquetas.js'
 
-export function TablaHistorial({ lanzamientos }) {
+// RF-09: historial ordenado de lanzamientos. En V2 también muestra la ejecución de una estrategia (con subtítulo).
+export function TablaHistorial({ lanzamientos, subtitulo = null }) {
   return (
     <section className="panel" aria-labelledby="titulo-historial">
       <h2 id="titulo-historial">Historial</h2>
+      {subtitulo && <p className="panel__subtitulo">{subtitulo}</p>}
       <div className="historial">
         <table aria-labelledby="titulo-historial">
           <thead>
