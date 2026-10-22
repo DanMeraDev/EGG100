@@ -1,12 +1,16 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { TOTAL_PISOS } from '../dominio/constantes.js'
+import { Edificio } from '../dominio/Edificio.js'
+import { Partida } from '../dominio/Partida.js'
 import { ESTADO_PISO } from '../dominio/RegistroInferencias.js'
+import { ejecutarEstrategia } from '../dominio/estrategias/Ejecutor.js'
+import { obtenerEstrategia } from '../dominio/estrategias/RegistroEstrategias.js'
 import { ComparacionEstrategias } from './ComparacionEstrategias.jsx'
 import { ControlesEstrategia } from './ControlesEstrategia.jsx'
 import { Leyenda } from './Leyenda.jsx'
 import { MensajeEstado } from './MensajeEstado.jsx'
 import { describirEjecucion, MENSAJE_INICIAL_ESTRATEGIAS } from './mensajes.js'
-import { ESTRATEGIA, ESTRATEGIAS, nombreEstrategia } from './opciones.js'
+import { ESTRATEGIA, ESTRATEGIAS, estaRegistrada, nombreEstrategia } from './opciones.js'
 import { ResumenEjecucion } from './ResumenEjecucion.jsx'
 import { TablaHistorial } from './TablaHistorial.jsx'
 import { TorreEdificio } from './TorreEdificio.jsx'
@@ -16,52 +20,90 @@ const PISOS_SIN_INFORMACION = Array.from({ length: TOTAL_PISOS }, (_, indice) =>
   estado: ESTADO_PISO.DESCONOCIDO,
 }))
 const ESTRATEGIAS_COMPARABLES = ESTRATEGIAS.filter(({ disponible }) => disponible)
+const EDIFICIO = new Edificio()
 const sinAccion = () => {}
 
-// Pantalla «Ejecución de estrategias» de los prototipos V2 y V3. Solo interfaz: los comentarios «LÓGICA»
-// indican qué debe aportar la lógica en cada punto; mientras tanto se muestran los estados iniciales.
+// Pantalla «Ejecución de estrategias» de los prototipos V2 y V3 (RF-07, RF-08, RF-09, RF-10, RF-16, RF-21).
 export function PantallaEstrategias() {
   const [estrategia, setEstrategia] = useState(ESTRATEGIA.SECUENCIAL)
   const [pisoCritico, setPisoCritico] = useState('')
+  const [ejecucion, setEjecucion] = useState(null)
+  const [comparacion, setComparacion] = useState({ pisoCritico: null, lanzamientos: {}, menosLanzamientos: [] })
+  const [errorPiso, setErrorPiso] = useState(null)
 
-  // LÓGICA (RF-08, RF-09, RF-16, RF-21): resultado de la última ejecución, o null si todavía no hay ninguna.
-  // Forma esperada:
-  //   {
-  //     estrategia,        // id de ESTRATEGIA que se ejecutó
-  //     pisoCritico,       // F usado en la ejecución
-  //     lanzamientos,      // [{ numero, piso, resultado }] en orden, sin omisiones ni duplicados (RF-09)
-  //     pisos,             // [{ numero, estado }] para colorear la torre igual que en V1
-  //     resuelta,          // false si se agotaron los huevos sin determinar F (CU-05)
-  //     pisoIdentificado,  // F encontrado por la estrategia
-  //     huevosRotos,       // 0, 1 o 2
-  //   }
-  const ejecucion = null
-
-  // LÓGICA (RF-10): lanzamientos de la última ejecución de cada estrategia con el mismo F (null si falta
-  // ejecutarla) y los ids de las que usaron menos (varios si empatan; vacío si falta alguna). Si el usuario
-  // cambia F, los resultados anteriores dejan de ser comparables y deben descartarse.
-  const comparacion = { pisoCritico: null, lanzamientos: {}, menosLanzamientos: [] }
-
-  // LÓGICA (RF-06): mensaje de error si `pisoCritico` no es un entero entre 1 y 100; null si es válido.
-  const errorPiso = null
+  const cambiarPiso = (nuevoPiso) => {
+    setPisoCritico(nuevoPiso)
+    setErrorPiso(null)
+    const f = EDIFICIO.interpretarPiso(nuevoPiso)
+    if (comparacion.pisoCritico !== null && f !== comparacion.pisoCritico) {
+      setComparacion({ pisoCritico: null, lanzamientos: {}, menosLanzamientos: [] })
+    }
+  }
 
   const ejecutar = () => {
-    // LÓGICA (RF-06, RF-07, RF-08, RF-11, RF-21): validar `pisoCritico` (Edificio.interpretarPiso). Si es
-    // válido, ejecutar la estrategia `estrategia` con ese F y las mismas reglas de V1 (2 huevos; se rompe si
-    // piso ≥ F), guardar el resultado en `ejecucion` y actualizar `comparacion`.
+    const piso = EDIFICIO.interpretarPiso(pisoCritico)
+    if (piso === null) {
+      setErrorPiso('Piso crítico no válido: elige un número entero entre 1 y 100.')
+      return
+    }
+    setErrorPiso(null)
+
+    if (!estaRegistrada(estrategia)) {
+      return
+    }
+
+    const partida = new Partida({ edificio: EDIFICIO })
+    partida.iniciar({ pisoCritico: piso })
+    const fnEstrategia = obtenerEstrategia(estrategia)
+    const resultado = ejecutarEstrategia(partida, fnEstrategia)
+
+    const nuevaEjecucion = {
+      estrategia,
+      pisoCritico: piso,
+      lanzamientos: resultado.lanzamientos,
+      pisos: resultado.pisos,
+      resuelta: resultado.resuelta,
+      pisoIdentificado: resultado.pisoIdentificado,
+      huevosRotos: resultado.huevosRotos,
+    }
+    setEjecucion(nuevaEjecucion)
+
+    const lanzamientosActuales =
+      comparacion.pisoCritico === piso ? { ...comparacion.lanzamientos } : {}
+    lanzamientosActuales[estrategia] = resultado.lanzamientos.length
+
+    const comparables = ESTRATEGIAS_COMPARABLES.map(({ id }) => id)
+    const faltan = comparables.filter((id) => lanzamientosActuales[id] === undefined)
+    let menosLanzamientos = []
+    if (faltan.length === 0) {
+      const min = Math.min(...comparables.map((id) => lanzamientosActuales[id]))
+      menosLanzamientos = comparables.filter((id) => lanzamientosActuales[id] === min)
+    }
+
+    setComparacion({
+      pisoCritico: piso,
+      lanzamientos: lanzamientosActuales,
+      menosLanzamientos,
+    })
   }
 
   const reiniciar = () => {
     setEstrategia(ESTRATEGIA.SECUENCIAL)
     setPisoCritico('')
-    // LÓGICA: descartar también `ejecucion` y `comparacion`.
+    setErrorPiso(null)
+    setEjecucion(null)
+    setComparacion({ pisoCritico: null, lanzamientos: {}, menosLanzamientos: [] })
   }
 
-  const resultadosComparacion = ESTRATEGIAS_COMPARABLES.map(({ id, nombre }) => ({
-    id,
-    nombre,
-    lanzamientos: comparacion.lanzamientos[id] ?? null,
-  }))
+  const resultadosComparacion = useMemo(
+    () =>
+      ESTRATEGIAS_COMPARABLES.map(({ id, nombre }) => ({
+        id,
+        nombre,
+        lanzamientos: comparacion.lanzamientos[id] ?? null,
+      })),
+    [comparacion],
+  )
 
   return (
     <main className="simulacion">
@@ -81,7 +123,7 @@ export function PantallaEstrategias() {
             pisoCritico={pisoCritico}
             errorPiso={errorPiso}
             onCambiarEstrategia={setEstrategia}
-            onCambiarPiso={setPisoCritico}
+            onCambiarPiso={cambiarPiso}
             onEjecutar={ejecutar}
             onReiniciar={reiniciar}
           />

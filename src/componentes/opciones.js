@@ -1,31 +1,27 @@
+import { ID_ESTRATEGIA, obtenerEstrategiasDisponibles } from '../dominio/estrategias/RegistroEstrategias.js'
+
 // Opciones que el usuario elige en la interfaz de los prototipos V2 y V3.
 export const MODO_PISO = Object.freeze({
   ALEATORIO: 'aleatorio',
   ELEGIDO: 'elegido',
 })
 
-// LÓGICA (RF-07, RF-08, RF-11, RF-21): usar estos mismos identificadores al implementar las estrategias.
+// Los identificadores de las estrategias implementadas son los del registro del dominio (RF-07).
+// LÓGICA (RF-11): al registrar la estrategia óptima en RegistroEstrategias, quitar su entrada local de abajo.
 export const ESTRATEGIA = Object.freeze({
-  SECUENCIAL: 'secuencial',
-  SALTOS_10: 'saltos_10',
+  SECUENCIAL: ID_ESTRATEGIA.SECUENCIAL,
+  SALTOS_10: ID_ESTRATEGIA.SALTOS_10,
   OPTIMA: 'optima',
 })
 
+// Nombre y descripción vienen del registro; `disponible` indica que la opción se puede elegir.
+const registradas = new Map(obtenerEstrategiasDisponibles().map((estrategia) => [estrategia.id, estrategia]))
+const desdeRegistro = (id) => ({ ...registradas.get(id), disponible: true })
+
 // Una opción con `disponible: false` se muestra bloqueada junto a su `aviso`.
 export const ESTRATEGIAS = Object.freeze([
-  {
-    id: ESTRATEGIA.SECUENCIAL,
-    nombre: 'Secuencial',
-    descripcion: 'Prueba los pisos 1, 2, 3… de uno en uno hasta que el huevo se rompe.',
-    disponible: true,
-  },
-  {
-    id: ESTRATEGIA.SALTOS_10,
-    nombre: 'Saltos de 10',
-    descripcion:
-      'Prueba los pisos 10, 20, 30…; tras la primera rotura, revisa uno a uno los pisos desde el último seguro.',
-    disponible: true,
-  },
+  desdeRegistro(ESTRATEGIA.SECUENCIAL),
+  desdeRegistro(ESTRATEGIA.SALTOS_10),
   {
     id: ESTRATEGIA.OPTIMA,
     nombre: 'Óptima',
@@ -33,6 +29,9 @@ export const ESTRATEGIAS = Object.freeze([
     disponible: true,
   },
 ])
+
+// Una estrategia se puede ejecutar si el registro del dominio la conoce.
+export const estaRegistrada = (id) => registradas.has(id)
 
 export function nombreEstrategia(id) {
   return ESTRATEGIAS.find((opcion) => opcion.id === id)?.nombre ?? id
