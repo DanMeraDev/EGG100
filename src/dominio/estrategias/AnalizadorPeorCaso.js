@@ -139,3 +139,40 @@ export function analizarTodasLasEstrategias(
     resultados: Object.freeze(resultados),
   })
 }
+
+// Compara los peores casos de las estrategias ordenados de menor a mayor (RF-14).
+//
+// Utiliza `analizarTodasLasEstrategias` y retorna un arreglo ordenado ascendentemente
+// por la cantidad de lanzamientos en el peor caso, garantizando que la estrategia
+// Óptima se posicione en el primer lugar como la más eficiente (14 lanzamientos).
+export function compararPeoresCasos(
+  totalPisos = TOTAL_PISOS,
+  estrategias = obtenerEstrategiasDisponibles().map((e) => e.id),
+) {
+  let pisos = totalPisos
+  let lista = estrategias
+
+  if (Array.isArray(totalPisos)) {
+    lista = totalPisos
+    pisos = TOTAL_PISOS
+  }
+
+  const { resultados } = analizarTodasLasEstrategias(pisos, lista)
+  const catalogo = new Map(obtenerEstrategiasDisponibles().map((e) => [e.id, e]))
+
+  const ordenados = resultados.map((item) => {
+    const metadatos = catalogo.get(item.estrategiaId)
+    return Object.freeze({
+      id: item.estrategiaId,
+      estrategiaId: item.estrategiaId,
+      nombre: metadatos?.nombre ?? item.estrategiaId,
+      peorCaso: item.maxIntentos,
+      maxIntentos: item.maxIntentos,
+      pisosPeorCaso: item.pisosPeorCaso,
+      casos: item.casos,
+    })
+  })
+
+  return ordenados.sort((a, b) => a.peorCaso - b.peorCaso)
+}
+

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   analizarPeorCaso,
   analizarTodasLasEstrategias,
+  compararPeoresCasos,
 } from './AnalizadorPeorCaso.js'
 import { siguientePisoOptima } from './EstrategiaOptima.js'
 import { ID_ESTRATEGIA } from './RegistroEstrategias.js'
@@ -121,6 +122,63 @@ describe('AnalizadorPeorCaso (RF-13, Prototipo V3)', () => {
       })
       expect(analisis.menorPeorCaso).toEqual(['optima'])
       expect(analisis.resultados).toHaveLength(2)
+    })
+  })
+
+  describe('compararPeoresCasos (RF-14)', () => {
+    it('devuelve el arreglo ordenado de menor a mayor peor caso, con Óptima en primer lugar', () => {
+      const ranking = compararPeoresCasos()
+
+      expect(ranking).toHaveLength(3)
+
+      // 1er lugar: Óptima (14)
+      expect(ranking[0].id).toBe('optima')
+      expect(ranking[0].nombre).toBe('Óptima')
+      expect(ranking[0].peorCaso).toBe(14)
+      expect(ranking[0].maxIntentos).toBe(14)
+
+      // 2do lugar: Saltos de 10 (19)
+      expect(ranking[1].id).toBe('saltos_10')
+      expect(ranking[1].nombre).toBe('Saltos de 10')
+      expect(ranking[1].peorCaso).toBe(19)
+
+      // 3er lugar: Secuencial (99)
+      expect(ranking[2].id).toBe('secuencial')
+      expect(ranking[2].nombre).toBe('Secuencial')
+      expect(ranking[2].peorCaso).toBe(99)
+
+      // Verifica orden estrictamente ascendente
+      expect(ranking[0].peorCaso).toBeLessThan(ranking[1].peorCaso)
+      expect(ranking[1].peorCaso).toBeLessThan(ranking[2].peorCaso)
+    })
+
+    it('permite comparar un subconjunto específico de estrategias', () => {
+      const ranking = compararPeoresCasos(100, ['secuencial', 'saltos_10'])
+
+      expect(ranking).toHaveLength(2)
+      expect(ranking[0].id).toBe('saltos_10')
+      expect(ranking[0].peorCaso).toBe(19)
+      expect(ranking[1].id).toBe('secuencial')
+      expect(ranking[1].peorCaso).toBe(99)
+    })
+
+    it('admite pasar la lista de estrategias como primer argumento', () => {
+      const ranking = compararPeoresCasos(['secuencial', 'optima'])
+
+      expect(ranking).toHaveLength(2)
+      expect(ranking[0].id).toBe('optima')
+      expect(ranking[0].peorCaso).toBe(14)
+      expect(ranking[1].id).toBe('secuencial')
+      expect(ranking[1].peorCaso).toBe(99)
+    })
+
+    it('incluye los detalles inmutables de casos y pisos de peor caso', () => {
+      const ranking = compararPeoresCasos()
+
+      const optima = ranking[0]
+      expect(optima.casos).toHaveLength(100)
+      expect(optima.pisosPeorCaso).toBeDefined()
+      expect(optima.pisosPeorCaso).toContain(14)
     })
   })
 })
