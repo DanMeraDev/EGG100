@@ -1,5 +1,6 @@
 import { Partida } from '../Partida.js'
 import { ejecutarEstrategia } from './Ejecutor.js'
+import { siguientePisoOptima } from './EstrategiaOptima.js'
 import { ID_ESTRATEGIA, obtenerEstrategia, obtenerEstrategiasDisponibles } from './RegistroEstrategias.js'
 import { siguientePisoSaltosFijos } from './SaltosFijos.js'
 import { siguientePisoSecuencial } from './Secuencial.js'
@@ -23,6 +24,9 @@ function normalizarEntradaEstrategia(entrada) {
     }
     if (entrada === siguientePisoSaltosFijos) {
       return { id: ID_ESTRATEGIA.SALTOS_10, fn: entrada }
+    }
+    if (entrada === siguientePisoOptima) {
+      return { id: ID_ESTRATEGIA.OPTIMA, fn: entrada }
     }
     return { id: entrada.name || 'personalizada', fn: entrada }
   }

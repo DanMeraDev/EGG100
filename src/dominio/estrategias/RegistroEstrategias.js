@@ -1,3 +1,4 @@
+import { siguientePisoOptima } from './EstrategiaOptima.js'
 import { siguientePisoSaltosFijos } from './SaltosFijos.js'
 import { siguientePisoSecuencial } from './Secuencial.js'
 
@@ -5,6 +6,7 @@ import { siguientePisoSecuencial } from './Secuencial.js'
 export const ID_ESTRATEGIA = Object.freeze({
   SECUENCIAL: 'secuencial',
   SALTOS_10: 'saltos_10',
+  OPTIMA: 'optima',
 })
 
 // Catálogo interno: metadatos que se muestran al usuario y la fábrica de cada estrategia.
@@ -22,6 +24,12 @@ const CATALOGO = Object.freeze([
     descripcion:
       'Prueba los pisos 10, 20, 30…; tras la primera rotura, revisa uno a uno los pisos desde el último seguro.',
     crear: () => siguientePisoSaltosFijos,
+  },
+  {
+    id: ID_ESTRATEGIA.OPTIMA,
+    nombre: 'Óptima',
+    descripcion: 'Empieza en el piso 14 y salta 13, 12, 11… pisos; nunca necesita más de 14 lanzamientos.',
+    crear: () => siguientePisoOptima,
   },
 ])
 
