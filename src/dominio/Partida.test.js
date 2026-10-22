@@ -232,4 +232,71 @@ describe('Partida', () => {
       expect(partida.estado).toBe(ESTADO_PARTIDA.EN_CURSO)
     })
   })
+
+  describe('piso crítico configurado (RF-06, CU-03)', () => {
+    it('con F = 40 sobrevive en 39 y se rompe en 40 (CP-06)', () => {
+      const generar = vi.fn(() => 77)
+      const sobrevive = new Partida({ generarPisoCritico: generar })
+      sobrevive.iniciar({ pisoCritico: 40 })
+      expect(sobrevive.lanzar(39).lanzamiento.resultado).toBe(RESULTADO.SOBREVIVE)
+
+      const seRompe = new Partida({ generarPisoCritico: generar })
+      seRompe.iniciar({ pisoCritico: 40 })
+      expect(seRompe.lanzar(40).lanzamiento.resultado).toBe(RESULTADO.SE_ROMPE)
+      expect(generar).not.toHaveBeenCalled()
+    })
+
+    it('acepta los extremos 1 y 100', () => {
+      for (const pisoCritico of [1, 100]) {
+        const partida = new Partida()
+        partida.iniciar({ pisoCritico })
+        expect(partida.estado).toBe(ESTADO_PARTIDA.EN_CURSO)
+      }
+    })
+
+    it('mantiene F oculto mientras la partida está en curso', () => {
+      const partida = new Partida()
+      partida.iniciar({ pisoCritico: 40 })
+      expect(partida.pisoCriticoRevelado).toBeNull()
+      expect(partida.instantanea().pisoCriticoRevelado).toBeNull()
+    })
+
+    it('rechaza valores que no son un entero entre 1 y 100', () => {
+      for (const pisoCritico of [0, 101, -1, 2.5, NaN, 'abc', '40', null]) {
+        const partida = new Partida({ generarPisoCritico: () => 40 })
+        expect(() => partida.iniciar({ pisoCritico })).toThrow(RangeError)
+        expect(partida.estado).toBe(ESTADO_PARTIDA.SIN_INICIAR)
+      }
+    })
+
+    it('un valor inválido no altera una partida en curso', () => {
+      const { partida } = partidaCon(40)
+      partida.lanzar(30)
+      const antes = partida.instantanea()
+      expect(() => partida.reiniciar({ confirmado: true, pisoCritico: 101 })).toThrow(RangeError)
+      expect(partida.instantanea()).toEqual(antes)
+      expect(partida.lanzar(40).lanzamiento.resultado).toBe(RESULTADO.SE_ROMPE)
+    })
+
+    it('reiniciar acepta un nuevo F configurado y restablece la partida', () => {
+      const { partida, generar } = partidaCon(40)
+      partida.lanzar(60)
+      partida.reiniciar({ confirmado: true, pisoCritico: 70 })
+      expect(generar).toHaveBeenCalledTimes(1)
+      expect([partida.huevosDisponibles, partida.intentos]).toEqual([2, 0])
+      expect(partida.lanzar(69).lanzamiento.resultado).toBe(RESULTADO.SOBREVIVE)
+    })
+
+    it('sin pisoCritico sigue usando el generador aleatorio de V1', () => {
+      const generar = vi.fn(() => 55)
+      const partida = new Partida({ generarPisoCritico: generar })
+      partida.iniciar()
+      expect(generar).toHaveBeenLastCalledWith(100)
+      partida.iniciar({})
+      partida.reiniciar({ confirmado: true })
+      expect(generar).toHaveBeenCalledTimes(3)
+      expect(partida.lanzar(54).lanzamiento.resultado).toBe(RESULTADO.SOBREVIVE)
+      expect(partida.lanzar(55).lanzamiento.resultado).toBe(RESULTADO.SE_ROMPE)
+    })
+  })
 })

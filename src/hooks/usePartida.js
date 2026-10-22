@@ -16,7 +16,7 @@ export function usePartida(opciones) {
       }
 
     return {
-      iniciar: conActualizacion(() => partida.iniciar()),
+      iniciar: conActualizacion((opcionesInicio) => partida.iniciar(opcionesInicio)),
       lanzar: conActualizacion((piso) => partida.lanzar(piso)),
       declarar: conActualizacion((piso) => partida.declarar(piso)),
       reiniciar: conActualizacion((opcionesReinicio) => partida.reiniciar(opcionesReinicio)),
