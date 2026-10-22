@@ -9,7 +9,7 @@ async function abrirEstrategias(page) {
 }
 
 test.describe('Prototipo V2 · interfaz', () => {
-  test('la barra cambia entre los dos modos y la partida manual se conserva', async ({ page }) => {
+  test('la barra cambia de sección y la partida manual se conserva', async ({ page }) => {
     await page.goto('/')
     await expect(boton(page, 'Lanzamiento manual')).toHaveAttribute('aria-pressed', 'true')
     await page.getByRole('button', { name: 'Iniciar partida' }).click()
@@ -38,9 +38,7 @@ test.describe('Prototipo V2 · interfaz', () => {
     await expect(page.getByTestId('piso-critico')).toHaveCount(0)
   })
 
-  test('RF-07: se elige Secuencial o Saltos de 10 y se confirma la estrategia activa; Óptima está bloqueada', async ({
-    page,
-  }) => {
+  test('RF-07: se elige la estrategia y se confirma la estrategia activa', async ({ page }) => {
     await abrirEstrategias(page)
     const activa = page.getByTestId('estrategia-activa')
     await expect(page.getByRole('radio', { name: 'Secuencial' })).toBeChecked()
@@ -48,7 +46,6 @@ test.describe('Prototipo V2 · interfaz', () => {
 
     await page.getByRole('radio', { name: 'Saltos de 10' }).check()
     await expect(activa).toHaveText('Saltos de 10')
-    await expect(page.getByRole('radio', { name: /Óptima/ })).toBeDisabled()
     await expect(page.getByLabel('Piso crítico (F)')).toBeVisible()
   })
 
@@ -59,10 +56,10 @@ test.describe('Prototipo V2 · interfaz', () => {
     await expect(page.getByRole('region', { name: 'Historial' })).toContainText('Aún no hay lanzamientos.')
 
     const comparacion = page.getByRole('region', { name: 'Comparación' })
-    await expect(comparacion.getByRole('row')).toHaveCount(3)
-    await expect(comparacion.getByText('Sin ejecutar')).toHaveCount(2)
+    await expect(comparacion.getByRole('row')).toHaveCount(4)
+    await expect(comparacion.getByText('Sin ejecutar')).toHaveCount(3)
     await expect(comparacion.getByTestId('conclusion-comparacion')).toHaveText(
-      'Falta ejecutar «Secuencial» y «Saltos de 10» con este piso crítico para poder comparar.',
+      'Falta ejecutar «Secuencial», «Saltos de 10» y «Óptima» con este piso crítico para poder comparar.',
     )
     await expect(comparacion).toContainText('no es el peor caso')
   })

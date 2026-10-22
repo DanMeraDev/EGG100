@@ -6,7 +6,7 @@ Simulador web educativo del problema de los dos huevos y los 100 pisos, construi
 | --- | --- | --- |
 | **V1 · Simulación básica** | RF-01 a RF-05 y RF-17 a RF-20 | Implementado |
 | V2 · Estrategias | RF-06 a RF-10 y RF-21 | Interfaz lista; lógica pendiente |
-| V3 · Optimización | RF-11 a RF-16 | Pendiente |
+| V3 · Optimización | RF-11 a RF-16 | Interfaz lista; lógica pendiente |
 
 ## Requisitos previos
 
@@ -31,8 +31,8 @@ src/
 ├── dominio/        # Reglas del juego en clases JS puras (sin React) y sus pruebas *.test.js
 ├── hooks/          # usePartida: conecta la clase Partida con React
 ├── componentes/    # Interfaz: pantallas, torre, paneles, diálogos y mensajes
-├── prototipo.js    # Versión visible del prototipo (V2)
-├── App.jsx         # Pestañas de modo: lanzamiento manual o ejecución de estrategias
+├── prototipo.js    # Versión visible del prototipo (V3)
+├── App.jsx         # Pestañas: lanzamiento manual, ejecución de estrategias y análisis y resultados
 └── main.jsx
 tests/e2e/          # Pruebas Playwright nombradas por caso de prueba (CP-xx)
 .github/workflows/  # CI: lint, pruebas unitarias, build y E2E
@@ -74,9 +74,14 @@ La lógica vive en `src/dominio` y no depende de React: se prueba de forma aisla
 - **Reiniciar** pide confirmación mientras la partida está en curso (RN-12); una partida terminada se reinicia directamente.
 - **Piso 100 tras sobrevivir en el 99.** La evidencia ya determina F = 100 y se puede declarar, pero el piso 100 sigue gris y lanzar desde él cuenta como intento, porque RN-08 solo marca lo que se deduce directamente de cada lanzamiento. Si RN-09 se interpreta en sentido amplio, ese lanzamiento debería bloquearse como redundante.
 
-## V2: interfaz lista, lógica pendiente
+## V2 y V3: interfaz lista, lógica pendiente
 
-La interfaz de V2 (RF-06, RF-07, RF-09 y RF-10) ya está construida: pestaña «Ejecución de estrategias», selección de estrategia, campo del piso crítico, historial y comparación. La lógica todavía no está conectada, así que «Ejecutar» aún no hace nada y el piso crítico elegido al iniciar no se aplica.
+La interfaz de V2 y V3 ya está construida:
+
+- **V2 (RF-06, RF-07, RF-09 y RF-10):** pestaña «Ejecución de estrategias» con la selección de estrategia, el campo del piso crítico, el historial y la comparación.
+- **V3 (RF-12 a RF-16):** la estrategia «Óptima» ya se puede elegir, cada ejecución muestra un resumen y la pestaña «Análisis y resultados» reúne la secuencia óptima, el análisis de los 100 escenarios y la explicación del límite de 14 lanzamientos.
+
+La lógica todavía no está conectada: «Ejecutar», «Ver secuencia» y «Analizar los 100 escenarios» aún no hacen nada, y el piso crítico elegido al iniciar no se aplica.
 
 Cada punto donde falta lógica tiene un comentario `LÓGICA (RF-xx)` que explica qué debe hacer y qué datos espera la interfaz. Para encontrarlos:
 

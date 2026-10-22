@@ -7,6 +7,7 @@ import { Leyenda } from './Leyenda.jsx'
 import { MensajeEstado } from './MensajeEstado.jsx'
 import { describirEjecucion, MENSAJE_INICIAL_ESTRATEGIAS } from './mensajes.js'
 import { ESTRATEGIA, ESTRATEGIAS, nombreEstrategia } from './opciones.js'
+import { ResumenEjecucion } from './ResumenEjecucion.jsx'
 import { TablaHistorial } from './TablaHistorial.jsx'
 import { TorreEdificio } from './TorreEdificio.jsx'
 
@@ -17,13 +18,13 @@ const PISOS_SIN_INFORMACION = Array.from({ length: TOTAL_PISOS }, (_, indice) =>
 const ESTRATEGIAS_COMPARABLES = ESTRATEGIAS.filter(({ disponible }) => disponible)
 const sinAccion = () => {}
 
-// Pantalla «Ejecución de estrategia» del prototipo V2. Solo interfaz: los comentarios «LÓGICA» indican
-// qué debe aportar la lógica en cada punto; mientras tanto se muestran los estados iniciales.
+// Pantalla «Ejecución de estrategias» de los prototipos V2 y V3. Solo interfaz: los comentarios «LÓGICA»
+// indican qué debe aportar la lógica en cada punto; mientras tanto se muestran los estados iniciales.
 export function PantallaEstrategias() {
   const [estrategia, setEstrategia] = useState(ESTRATEGIA.SECUENCIAL)
   const [pisoCritico, setPisoCritico] = useState('')
 
-  // LÓGICA (RF-08, RF-09, RF-21): resultado de la última ejecución, o null si todavía no hay ninguna.
+  // LÓGICA (RF-08, RF-09, RF-16, RF-21): resultado de la última ejecución, o null si todavía no hay ninguna.
   // Forma esperada:
   //   {
   //     estrategia,        // id de ESTRATEGIA que se ejecutó
@@ -37,16 +38,16 @@ export function PantallaEstrategias() {
   const ejecucion = null
 
   // LÓGICA (RF-10): lanzamientos de la última ejecución de cada estrategia con el mismo F (null si falta
-  // ejecutarla) y cuál usó menos: el id de la estrategia, EMPATE o null. Si el usuario cambia F, los
-  // resultados anteriores dejan de ser comparables y deben descartarse.
-  const comparacion = { pisoCritico: null, lanzamientos: {}, menosLanzamientos: null }
+  // ejecutarla) y los ids de las que usaron menos (varios si empatan; vacío si falta alguna). Si el usuario
+  // cambia F, los resultados anteriores dejan de ser comparables y deben descartarse.
+  const comparacion = { pisoCritico: null, lanzamientos: {}, menosLanzamientos: [] }
 
   // LÓGICA (RF-06): mensaje de error si `pisoCritico` no es un entero entre 1 y 100; null si es válido.
   const errorPiso = null
 
   const ejecutar = () => {
-    // LÓGICA (RF-06, RF-07, RF-08, RF-21): validar `pisoCritico` (Edificio.interpretarPiso). Si es válido,
-    // ejecutar la estrategia `estrategia` con ese F y las mismas reglas de V1 (2 huevos; se rompe si
+    // LÓGICA (RF-06, RF-07, RF-08, RF-11, RF-21): validar `pisoCritico` (Edificio.interpretarPiso). Si es
+    // válido, ejecutar la estrategia `estrategia` con ese F y las mismas reglas de V1 (2 huevos; se rompe si
     // piso ≥ F), guardar el resultado en `ejecucion` y actualizar `comparacion`.
   }
 
@@ -72,20 +73,23 @@ export function PantallaEstrategias() {
         onSeleccionar={sinAccion}
       />
 
-      <section className="panel" aria-labelledby="titulo-estrategia">
-        <h2 id="titulo-estrategia">Estrategia y simulación</h2>
-        <ControlesEstrategia
-          estrategia={estrategia}
-          pisoCritico={pisoCritico}
-          errorPiso={errorPiso}
-          onCambiarEstrategia={setEstrategia}
-          onCambiarPiso={setPisoCritico}
-          onEjecutar={ejecutar}
-          onReiniciar={reiniciar}
-        />
-        {/* CU-05: piso crítico identificado o búsqueda no resuelta. */}
-        <MensajeEstado mensaje={ejecucion ? describirEjecucion(ejecucion) : MENSAJE_INICIAL_ESTRATEGIAS} />
-      </section>
+      <div className="columna">
+        <section className="panel" aria-labelledby="titulo-estrategia">
+          <h2 id="titulo-estrategia">Estrategia y simulación</h2>
+          <ControlesEstrategia
+            estrategia={estrategia}
+            pisoCritico={pisoCritico}
+            errorPiso={errorPiso}
+            onCambiarEstrategia={setEstrategia}
+            onCambiarPiso={setPisoCritico}
+            onEjecutar={ejecutar}
+            onReiniciar={reiniciar}
+          />
+          {/* CU-05: piso crítico identificado o búsqueda no resuelta. */}
+          <MensajeEstado mensaje={ejecucion ? describirEjecucion(ejecucion) : MENSAJE_INICIAL_ESTRATEGIAS} />
+        </section>
+        <ResumenEjecucion ejecucion={ejecucion} />
+      </div>
 
       <div className="columna">
         <TablaHistorial

@@ -1,16 +1,17 @@
-// Opciones que el usuario elige en la interfaz del prototipo V2.
+// Opciones que el usuario elige en la interfaz de los prototipos V2 y V3.
 export const MODO_PISO = Object.freeze({
   ALEATORIO: 'aleatorio',
   ELEGIDO: 'elegido',
 })
 
-// LÓGICA (RF-07, RF-08, RF-21): usar estos mismos identificadores al implementar las estrategias.
+// LÓGICA (RF-07, RF-08, RF-11, RF-21): usar estos mismos identificadores al implementar las estrategias.
 export const ESTRATEGIA = Object.freeze({
   SECUENCIAL: 'secuencial',
   SALTOS_10: 'saltos_10',
   OPTIMA: 'optima',
 })
 
+// Una opción con `disponible: false` se muestra bloqueada junto a su `aviso`.
 export const ESTRATEGIAS = Object.freeze([
   {
     id: ESTRATEGIA.SECUENCIAL,
@@ -28,14 +29,10 @@ export const ESTRATEGIAS = Object.freeze([
   {
     id: ESTRATEGIA.OPTIMA,
     nombre: 'Óptima',
-    descripcion: 'Saltos decrecientes que nunca necesitan más de 14 lanzamientos.',
-    disponible: false,
-    aviso: 'Disponible en V3',
+    descripcion: 'Empieza en el piso 14 y salta 13, 12, 11… pisos; nunca necesita más de 14 lanzamientos.',
+    disponible: true,
   },
 ])
-
-// Valor de `menosLanzamientos` cuando las estrategias usaron los mismos lanzamientos (RF-10).
-export const EMPATE = 'empate'
 
 export function nombreEstrategia(id) {
   return ESTRATEGIAS.find((opcion) => opcion.id === id)?.nombre ?? id

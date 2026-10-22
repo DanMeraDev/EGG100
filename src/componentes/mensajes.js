@@ -51,6 +51,12 @@ export function mensajeAlMostrarPartida({ estado, intentos }) {
 
 const plural = (cantidad, singular, varios) => (cantidad === 1 ? singular : varios)
 
+// Nombres entre comillas unidos como en español: «A», «B» y «C».
+export function listaDeNombres(nombres) {
+  const citados = nombres.map((nombre) => `«${nombre}»`)
+  return citados.length < 2 ? citados.join('') : `${citados.slice(0, -1).join(', ')} y ${citados.at(-1)}`
+}
+
 const pisosSeguros = (hasta) =>
   hasta === 1 ? 'El piso 1 es seguro.' : `Los pisos 1 a ${hasta} son seguros.`
 
