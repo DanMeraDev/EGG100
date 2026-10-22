@@ -1,6 +1,6 @@
 import { ETIQUETA_ESTADO_PARTIDA } from './etiquetas.js'
 
-// CU-02: huevos, intentos y estado de la partida. F solo se muestra cuando la partida terminó.
+// CU-02: huevos, intentos y estado de la partida. F se muestra como «Oculto» hasta que la partida termina (RF-06).
 export function PanelEstado({ huevosIniciales, huevosDisponibles, intentos, estado, pisoCriticoRevelado }) {
   return (
     <dl className="estado">
@@ -23,12 +23,16 @@ export function PanelEstado({ huevosIniciales, huevosDisponibles, intentos, esta
         <dt>Partida</dt>
         <dd data-testid="estado-partida">{ETIQUETA_ESTADO_PARTIDA[estado]}</dd>
       </div>
-      {pisoCriticoRevelado !== null && (
-        <div className="estado__fila">
-          <dt>Piso crítico</dt>
+      <div className="estado__fila">
+        <dt>Piso crítico</dt>
+        {pisoCriticoRevelado === null ? (
+          <dd className="estado__oculto" data-testid="piso-critico-oculto">
+            Oculto
+          </dd>
+        ) : (
           <dd data-testid="piso-critico">{pisoCriticoRevelado}</dd>
-        </div>
-      )}
+        )}
+      </div>
     </dl>
   )
 }
