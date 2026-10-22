@@ -63,4 +63,17 @@ test.describe('Prototipo V2 · interfaz', () => {
     )
     await expect(comparacion).toContainText('no es el peor caso')
   })
+
+  test('RF-08: ejecuta la estrategia seleccionada y actualiza historial, resumen y comparación', async ({ page }) => {
+    await abrirEstrategias(page)
+    await page.getByLabel('Piso crítico (F)').fill('40')
+    await boton(page, 'Ejecutar').click()
+
+    await expect(page.getByTestId('mensaje')).toContainText('«Secuencial» identificó el piso crítico 40 en 40 lanzamientos')
+    await expect(page.getByRole('region', { name: 'Resumen' })).toContainText('40')
+
+    await page.getByRole('radio', { name: 'Saltos de 10' }).check()
+    await boton(page, 'Ejecutar').click()
+    await expect(page.getByTestId('mensaje')).toContainText('«Saltos de 10» identificó el piso crítico 40 en 13 lanzamientos')
+  })
 })
