@@ -55,4 +55,31 @@ test.describe('Prototipo V3 · interfaz', () => {
     await expect(filas.nth(1)).not.toContainText('No alcanzan')
     await expect(explicacion).toContainText('por eso 14 es el mínimo')
   })
+
+  test('RF-11 y RF-12: «Ver secuencia» ejecuta la estrategia óptima para un F dado y separa por huevos', async ({
+    page,
+  }) => {
+    await abrir(page, 'Análisis y resultados')
+    const secuencia = page.getByRole('region', { name: 'Secuencia óptima' })
+    await secuencia.getByLabel('Piso crítico (F)').fill('27')
+    await secuencia.getByRole('button', { name: 'Ver secuencia' }).click()
+
+    await expect(secuencia).toContainText('Orden de lanzamientos con F = 27')
+    await expect(secuencia.getByRole('heading', { name: 'Huevo 1' })).toBeVisible()
+    await expect(secuencia.getByRole('heading', { name: 'Huevo 2' })).toBeVisible()
+  })
+
+  test('RF-13 y RF-14: «Analizar los 100 escenarios» calcula los peores casos y corona a Óptima', async ({ page }) => {
+    await abrir(page, 'Análisis y resultados')
+    const analisis = page.getByRole('region', { name: 'Análisis de 100 escenarios' })
+    await analisis.getByRole('button', { name: 'Analizar los 100 escenarios' }).click()
+
+    await expect(analisis.getByText('14 lanzamientos', { exact: true })).toBeVisible()
+    await expect(analisis.getByText('19 lanzamientos', { exact: true })).toBeVisible()
+    await expect(analisis.getByText('99 lanzamientos', { exact: true })).toBeVisible()
+    await expect(analisis.getByText('Menor peor caso', { exact: true })).toBeVisible()
+    await expect(analisis.getByTestId('conclusion-peor-caso')).toContainText(
+      '«Óptima» tiene el menor peor caso: 14 lanzamientos',
+    )
+  })
 })
