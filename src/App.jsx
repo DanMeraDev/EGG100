@@ -1,18 +1,20 @@
 import { useState } from 'react'
 import './App.css'
 import { Encabezado } from './componentes/Encabezado.jsx'
+import { PantallaAnalisis } from './componentes/PantallaAnalisis.jsx'
 import { PantallaEstrategias } from './componentes/PantallaEstrategias.jsx'
 import { PantallaInicio } from './componentes/PantallaInicio.jsx'
 import { PantallaSimulacion } from './componentes/PantallaSimulacion.jsx'
 import { ESTADO_PARTIDA } from './dominio/Partida.js'
 import { usePartida } from './hooks/usePartida.js'
 
-const VISTA = Object.freeze({ MANUAL: 'manual', ESTRATEGIAS: 'estrategias' })
+const VISTA = Object.freeze({ MANUAL: 'manual', ESTRATEGIAS: 'estrategias', ANALISIS: 'analisis' })
 
-// V2 agrega la ejecución de estrategias sin quitar el modo manual (decisión D-02 de la ERS).
+// V2 agrega la ejecución de estrategias sin quitar el modo manual (decisión D-02 de la ERS) y V3, el análisis.
 const VISTAS = [
   { id: VISTA.MANUAL, nombre: 'Lanzamiento manual' },
   { id: VISTA.ESTRATEGIAS, nombre: 'Ejecución de estrategias' },
+  { id: VISTA.ANALISIS, nombre: 'Análisis y resultados' },
 ]
 
 export default function App() {
@@ -30,7 +32,9 @@ export default function App() {
   }
 
   let pantalla
-  if (vista === VISTA.ESTRATEGIAS) {
+  if (vista === VISTA.ANALISIS) {
+    pantalla = <PantallaAnalisis />
+  } else if (vista === VISTA.ESTRATEGIAS) {
     pantalla = <PantallaEstrategias />
   } else if (partida.estado === ESTADO_PARTIDA.SIN_INICIAR) {
     pantalla = <PantallaInicio onIniciar={iniciarPartida} />

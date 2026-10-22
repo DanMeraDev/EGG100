@@ -7,7 +7,7 @@ export function Encabezado({ vistas, vista, onCambiarVista }) {
         <span className="barra__logo" aria-hidden="true" />
         <h1>EGG100 · Simulador de los dos huevos</h1>
       </div>
-      <nav className="barra__vistas" aria-label="Modo de simulación">
+      <nav className="barra__vistas" aria-label="Secciones del simulador">
         {vistas.map(({ id, nombre }) => (
           <button
             key={id}

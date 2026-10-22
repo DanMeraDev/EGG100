@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 0.5rem 1.5rem;
+  gap: 0.5rem 1rem;
   padding: 0.75rem 1.5rem;
   background: var(--barra);
   color: #fff;
@@ -32,16 +32,16 @@
 .barra__vistas {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
+  gap: 0.35rem;
 }
 
 .pestana {
-  padding: 0.35rem 0.95rem;
+  padding: 0.3rem 0.8rem;
   border: 1px solid rgb(255 255 255 / 0.4);
   border-radius: 999px;
   background: transparent;
   color: #fff;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
@@ -677,6 +677,224 @@
 }
 
 .comparacion__conclusion {
+  margin-top: 0.75rem;
+  font-weight: 600;
+}
+
+/* Prototipo V3: resumen, secuencia óptima, peor caso y explicación */
+.resumen {
+  margin-bottom: 0;
+}
+
+.resumen__vacio {
+  margin-top: 0;
+}
+
+.analisis {
+  width: min(1200px, 100% - 3rem);
+  margin: 1rem auto 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 1.25rem;
+}
+
+/* Entre 960 y 1200 px la explicación pasa a ocupar todo el ancho, debajo de las otras dos columnas. */
+@media (max-width: 1200px) {
+  .analisis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analisis > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 960px) {
+  .analisis {
+    grid-template-columns: 1fr;
+  }
+}
+
+.boton--ancho {
+  width: 100%;
+}
+
+.secuencia {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.secuencia__titulo {
+  font-weight: 600;
+}
+
+.secuencia__grupo h3 {
+  margin-bottom: 0.4rem;
+  color: var(--texto-suave);
+  font-size: 0.95rem;
+}
+
+.secuencia__pasos {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  list-style: none;
+}
+
+.secuencia__pasos li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.secuencia__flecha {
+  color: var(--texto-suave);
+  font-weight: 700;
+}
+
+.paso {
+  min-width: 3.5rem;
+  padding: 0.3rem 0.45rem;
+  display: grid;
+  justify-items: center;
+  border: 1px solid var(--desconocido-borde);
+  border-radius: 8px;
+  background: var(--desconocido);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.paso small {
+  color: var(--texto-suave);
+  font-size: 0.7rem;
+}
+
+.paso strong {
+  font-size: 1.15rem;
+}
+
+.paso span {
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.paso[data-resultado='sobrevive'] {
+  border-color: var(--seguro-borde);
+  background: var(--seguro);
+}
+
+.paso[data-resultado='se_rompe'] {
+  border-color: var(--rotura-borde);
+  background: var(--rotura);
+}
+
+.peor-caso {
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.peor-caso li {
+  padding: 0.6rem 0.8rem;
+  display: grid;
+  gap: 0.45rem;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.peor-caso li[data-destacada='true'] {
+  border-color: var(--seguro-borde);
+  background: #eef9ef;
+}
+
+.peor-caso__encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.25rem 0.5rem;
+  font-weight: 600;
+}
+
+.peor-caso__dato {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.peor-caso__valor {
+  flex: none;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  background: var(--primario);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.peor-caso__barra {
+  flex: 1;
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--desconocido);
+}
+
+.peor-caso__barra span {
+  display: block;
+  height: 100%;
+  background: var(--primario-borde);
+}
+
+.explicacion__pasos {
+  margin: 0 0 1rem;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.cobertura {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.cobertura li {
+  padding: 0.6rem 0.8rem;
+  display: grid;
+  justify-items: start;
+  gap: 0.3rem;
+  border: 1px solid var(--rotura-borde);
+  border-radius: 10px;
+  background: #fdf0f0;
+}
+
+.cobertura li[data-alcanza='true'] {
+  border-color: var(--seguro-borde);
+  background: #eef9ef;
+}
+
+.cobertura__suma {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.insignia--no {
+  border-color: var(--rotura-borde);
+  background: var(--rotura);
+}
+
+.explicacion__conclusion {
   margin-top: 0.75rem;
   font-weight: 600;
 }

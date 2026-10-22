@@ -26,7 +26,7 @@ export function ControlesEstrategia({
         error={errorPiso}
         onCambiar={onCambiarPiso}
       />
-      <p className="nota">Para comparar, ejecuta las dos estrategias con el mismo piso crítico.</p>
+      <p className="nota">Para comparar, ejecuta las estrategias con el mismo piso crítico.</p>
       <button type="submit" className="boton boton--primario">
         Ejecutar
       </button>
