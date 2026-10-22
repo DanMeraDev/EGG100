@@ -8,6 +8,10 @@ Simulador web educativo del problema de los dos huevos y los 100 pisos, construi
 | **V2 · Estrategias** | RF-06 a RF-10 y RF-21 | Implementado |
 | **V3 · Optimización** | RF-11 a RF-16 | Implementado |
 
+Cada versión corresponde a un **milestone**. El trabajo se gestiona con **GitHub Issues** y el [tablero del proyecto](https://github.com/users/DanMeraDev/projects/5).
+
+Cada prototipo se puede ejecutar por separado para ver la evolución: `git checkout v1.0` (V1), `git checkout v2.0` (V2, rama `prototipo-v2`) y `main` (V3).
+
 ## Requisitos previos
 
 - Node.js 22.12 o superior (recomendado 24 LTS) y npm.
