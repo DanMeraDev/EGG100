@@ -26,7 +26,8 @@ export const ESTRATEGIAS = Object.freeze([
     id: ESTRATEGIA.OPTIMA,
     nombre: 'Óptima',
     descripcion: 'Empieza en el piso 14 y salta 13, 12, 11… pisos; nunca necesita más de 14 lanzamientos.',
-    disponible: true,
+    disponible: false,
+    aviso: 'Disponible en V3',
   },
 ])
 

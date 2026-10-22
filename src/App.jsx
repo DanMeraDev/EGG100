@@ -16,7 +16,6 @@ const VISTA = Object.freeze({ MANUAL: 'manual', ESTRATEGIAS: 'estrategias', ANAL
 const VISTAS = [
   { id: VISTA.MANUAL, nombre: 'Lanzamiento manual' },
   { id: VISTA.ESTRATEGIAS, nombre: 'Ejecución de estrategias' },
-  { id: VISTA.ANALISIS, nombre: 'Análisis y resultados' },
 ]
 
 const EDIFICIO = new Edificio()

@@ -56,10 +56,10 @@ test.describe('Prototipo V2 · interfaz', () => {
     await expect(page.getByRole('region', { name: 'Historial' })).toContainText('Aún no hay lanzamientos.')
 
     const comparacion = page.getByRole('region', { name: 'Comparación' })
-    await expect(comparacion.getByRole('row')).toHaveCount(4)
-    await expect(comparacion.getByText('Sin ejecutar')).toHaveCount(3)
+    await expect(comparacion.getByRole('row')).toHaveCount(3)
+    await expect(comparacion.getByText('Sin ejecutar')).toHaveCount(2)
     await expect(comparacion.getByTestId('conclusion-comparacion')).toHaveText(
-      'Falta ejecutar «Secuencial», «Saltos de 10» y «Óptima» con este piso crítico para poder comparar.',
+      'Falta ejecutar «Secuencial» y «Saltos de 10» con este piso crítico para poder comparar.',
     )
     await expect(comparacion).toContainText('no es el peor caso')
   })
