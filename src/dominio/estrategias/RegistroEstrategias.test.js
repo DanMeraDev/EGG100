@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ESTRATEGIAS } from '../../componentes/opciones.js'
+import { siguientePisoOptima } from './EstrategiaOptima.js'
 import {
   ID_ESTRATEGIA,
   obtenerEstrategia,
@@ -12,11 +13,12 @@ const estadoInicial = { maxSeguro: 0, minRotura: null, huevosDisponibles: 2, tot
 
 describe('RegistroEstrategias (RF-07, CU-04)', () => {
   describe('obtenerEstrategiasDisponibles', () => {
-    it('lista Secuencial y Saltos de 10, en ese orden', () => {
+    it('lista Secuencial, Saltos de 10 y Óptima, en ese orden', () => {
       const lista = obtenerEstrategiasDisponibles()
       expect(lista.map(({ id, nombre }) => ({ id, nombre }))).toEqual([
         { id: 'secuencial', nombre: 'Secuencial' },
         { id: 'saltos_10', nombre: 'Saltos de 10' },
+        { id: 'optima', nombre: 'Óptima' },
       ])
     })
 
@@ -30,7 +32,7 @@ describe('RegistroEstrategias (RF-07, CU-04)', () => {
     it('los identificadores no se repiten y coinciden con ID_ESTRATEGIA', () => {
       const ids = obtenerEstrategiasDisponibles().map(({ id }) => id)
       expect(new Set(ids).size).toBe(ids.length)
-      expect(ids).toEqual([ID_ESTRATEGIA.SECUENCIAL, ID_ESTRATEGIA.SALTOS_10])
+      expect(ids).toEqual([ID_ESTRATEGIA.SECUENCIAL, ID_ESTRATEGIA.SALTOS_10, ID_ESTRATEGIA.OPTIMA])
     })
 
     it('no deja que el llamador altere el catálogo', () => {
@@ -38,7 +40,7 @@ describe('RegistroEstrategias (RF-07, CU-04)', () => {
       expect(Object.isFrozen(lista)).toBe(true)
       expect(Object.isFrozen(lista[0])).toBe(true)
       expect(() => lista.push({ id: 'otra', nombre: 'Otra' })).toThrow(TypeError)
-      expect(obtenerEstrategiasDisponibles()).toHaveLength(2)
+      expect(obtenerEstrategiasDisponibles()).toHaveLength(3)
     })
 
     it('usa los mismos identificadores y nombres que la interfaz', () => {
@@ -61,6 +63,12 @@ describe('RegistroEstrategias (RF-07, CU-04)', () => {
       expect(estrategia(estadoInicial)).toBe(10)
     })
 
+    it('devuelve la estrategia óptima para "optima"', () => {
+      const estrategia = obtenerEstrategia('optima')
+      expect(estrategia).toBe(siguientePisoOptima)
+      expect(estrategia(estadoInicial)).toBe(14)
+    })
+
     it('entrega una estrategia utilizable para cada id listado', () => {
       for (const { id } of obtenerEstrategiasDisponibles()) {
         const estrategia = obtenerEstrategia(id)
@@ -71,19 +79,19 @@ describe('RegistroEstrategias (RF-07, CU-04)', () => {
     })
 
     it('las estrategias obtenidas son independientes entre llamadas', () => {
-      const primera = obtenerEstrategia('saltos_10')
+      const primera = obtenerEstrategia('optima')
       primera({ maxSeguro: 50, minRotura: null, huevosDisponibles: 2, totalPisos: 100 })
-      expect(obtenerEstrategia('saltos_10')(estadoInicial)).toBe(10)
+      expect(obtenerEstrategia('optima')(estadoInicial)).toBe(14)
     })
 
     it('lanza un error claro si el identificador no existe', () => {
       expect(() => obtenerEstrategia('inexistente')).toThrow(
-        'Estrategia desconocida: "inexistente". Estrategias disponibles: secuencial, saltos_10.',
+        'Estrategia desconocida: "inexistente". Estrategias disponibles: secuencial, saltos_10, optima.',
       )
     })
 
     it('rechaza identificadores vacíos, de otro tipo, con otra capitalización o aún no disponibles', () => {
-      for (const invalido of ['', undefined, null, 42, 'Secuencial', ' secuencial', 'optima', 'saltos_fijos_10']) {
+      for (const invalido of ['', undefined, null, 42, 'Secuencial', ' secuencial', 'Optima', 'saltos_fijos_10']) {
         expect(() => obtenerEstrategia(invalido)).toThrow(/Estrategia desconocida/)
       }
     })

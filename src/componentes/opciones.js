@@ -7,11 +7,10 @@ export const MODO_PISO = Object.freeze({
 })
 
 // Los identificadores de las estrategias implementadas son los del registro del dominio (RF-07).
-// LÓGICA (RF-11): al registrar la estrategia óptima en RegistroEstrategias, quitar su entrada local de abajo.
 export const ESTRATEGIA = Object.freeze({
   SECUENCIAL: ID_ESTRATEGIA.SECUENCIAL,
   SALTOS_10: ID_ESTRATEGIA.SALTOS_10,
-  OPTIMA: 'optima',
+  OPTIMA: ID_ESTRATEGIA.OPTIMA,
 })
 
 // Nombre y descripción vienen del registro; `disponible` indica que la opción se puede elegir.
@@ -22,12 +21,7 @@ const desdeRegistro = (id) => ({ ...registradas.get(id), disponible: true })
 export const ESTRATEGIAS = Object.freeze([
   desdeRegistro(ESTRATEGIA.SECUENCIAL),
   desdeRegistro(ESTRATEGIA.SALTOS_10),
-  {
-    id: ESTRATEGIA.OPTIMA,
-    nombre: 'Óptima',
-    descripcion: 'Empieza en el piso 14 y salta 13, 12, 11… pisos; nunca necesita más de 14 lanzamientos.',
-    disponible: true,
-  },
+  desdeRegistro(ESTRATEGIA.OPTIMA),
 ])
 
 // Una estrategia se puede ejecutar si el registro del dominio la conoce.

@@ -1,37 +1,53 @@
 import { useState } from 'react'
+import { Edificio } from '../dominio/Edificio.js'
+import { Partida } from '../dominio/Partida.js'
+import { analizarTodasLasEstrategias } from '../dominio/estrategias/AnalizadorPeorCaso.js'
+import { ejecutarEstrategia } from '../dominio/estrategias/Ejecutor.js'
+import { siguientePisoOptima } from '../dominio/estrategias/EstrategiaOptima.js'
 import { AnalisisPeorCaso } from './AnalisisPeorCaso.jsx'
 import { ExplicacionOptima } from './ExplicacionOptima.jsx'
 import { SecuenciaOptima } from './SecuenciaOptima.jsx'
 
-// Pantalla «Análisis y resultados» del prototipo V3 (wireframe del mismo nombre). Solo interfaz: los
-// comentarios «LÓGICA» indican qué debe aportar la lógica; mientras tanto se muestran los estados iniciales.
+const EDIFICIO = new Edificio()
+
+// Pantalla «Análisis y resultados» del prototipo V3 (RF-11 a RF-15).
 export function PantallaAnalisis() {
   const [pisoCritico, setPisoCritico] = useState('')
+  const [secuencia, setSecuencia] = useState(null)
+  const [errorPiso, setErrorPiso] = useState(null)
+  const [analisis, setAnalisis] = useState(null)
 
-  // LÓGICA (RF-11, RF-12): ejecución de la estrategia óptima con el F indicado, o null si todavía no hay ninguna.
-  // Forma esperada: { pisoCritico, lanzamientos: [{ numero, piso, resultado }] } en orden de lanzamiento.
-  const secuencia = null
-
-  // LÓGICA (RF-06): mensaje de error si `pisoCritico` no es un entero entre 1 y 100; null si es válido.
-  const errorPiso = null
-
-  // LÓGICA (RF-13, RF-14): resultado de analizar los 100 pisos críticos, o null si todavía no se ejecutó.
-  // Forma esperada:
-  //   {
-  //     peorCaso,       // { [id de ESTRATEGIA]: máximo de lanzamientos con F = 1…100, o null si falta (CU-08) }
-  //     menorPeorCaso,  // ids de las estrategias con el menor peor caso (varios si empatan)
-  //     optimaValida,   // false si la óptima supera 14 lanzamientos en algún escenario (CU-07)
-  //   }
-  const analisis = null
-
-  const verSecuencia = () => {
-    // LÓGICA (RF-11, RF-12): validar `pisoCritico` (Edificio.interpretarPiso) y, si es válido, ejecutar la
-    // estrategia óptima con ese F (2 huevos; se rompe si piso ≥ F) y guardar el resultado en `secuencia`.
+  const cambiarPiso = (nuevoPiso) => {
+    setPisoCritico(nuevoPiso)
+    setErrorPiso(null)
   }
 
+  // RF-11, RF-12 (CU-07): ejecuta la estrategia óptima para un piso crítico dado
+  // y desglosa los lanzamientos realizados por cada huevo.
+  const verSecuencia = () => {
+    const piso = EDIFICIO.interpretarPiso(pisoCritico)
+    if (piso === null) {
+      setErrorPiso('Piso crítico no válido: elige un número entero entre 1 y 100.')
+      setSecuencia(null)
+      return
+    }
+    setErrorPiso(null)
+
+    const partida = new Partida({ edificio: EDIFICIO })
+    partida.iniciar({ pisoCritico: piso })
+    const resultado = ejecutarEstrategia(partida, siguientePisoOptima)
+
+    setSecuencia({
+      pisoCritico: piso,
+      lanzamientos: resultado.lanzamientos,
+    })
+  }
+
+  // RF-13, RF-14 (CU-08): corre los 100 escenarios para todas las estrategias,
+  // calcula su peor caso y corona a la estrategia con el menor peor caso.
   const analizar = () => {
-    // LÓGICA (RF-11, RF-13, RF-14): ejecutar cada estrategia con F = 1, 2, …, 100 bajo las mismas reglas,
-    // obtener el máximo de lanzamientos de cada una y guardar el resultado en `analisis`.
+    const resultado = analizarTodasLasEstrategias()
+    setAnalisis(resultado)
   }
 
   return (
@@ -40,7 +56,7 @@ export function PantallaAnalisis() {
         pisoCritico={pisoCritico}
         errorPiso={errorPiso}
         secuencia={secuencia}
-        onCambiarPiso={setPisoCritico}
+        onCambiarPiso={cambiarPiso}
         onVerSecuencia={verSecuencia}
       />
       <AnalisisPeorCaso analisis={analisis} onAnalizar={analizar} />
