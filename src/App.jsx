@@ -4,6 +4,8 @@ import { Encabezado } from './componentes/Encabezado.jsx'
 import { PantallaEstrategias } from './componentes/PantallaEstrategias.jsx'
 import { PantallaInicio } from './componentes/PantallaInicio.jsx'
 import { PantallaSimulacion } from './componentes/PantallaSimulacion.jsx'
+import { MODO_PISO } from './componentes/opciones.js'
+import { Edificio } from './dominio/Edificio.js'
 import { ESTADO_PARTIDA } from './dominio/Partida.js'
 import { usePartida } from './hooks/usePartida.js'
 
@@ -15,17 +17,26 @@ const VISTAS = [
   { id: VISTA.ESTRATEGIAS, nombre: 'Ejecución de estrategias' },
 ]
 
+const EDIFICIO = new Edificio()
+const ERROR_PISO_CRITICO = 'Piso crítico no válido: elige un número entero entre 1 y 100.'
+
 export default function App() {
   const { partida, iniciar, lanzar, declarar, reiniciar } = usePartida()
   const [vista, setVista] = useState(VISTA.MANUAL)
 
-  // LÓGICA (RF-06, CU-03): `_configuracion` es { modo, valor } (MODO_PISO en componentes/opciones.js);
-  // quitar el guion bajo al usarla. Si modo es MODO_PISO.ELEGIDO, validar `valor` (Edificio.interpretarPiso):
-  // si es válido, iniciar la partida con ese F, que debe seguir oculto; si no, no iniciar y devolver el
-  // mensaje de error, por ejemplo «Piso crítico no válido: elige un número entero entre 1 y 100.». Definir
-  // además si «Reiniciar» conserva el F elegido o genera uno aleatorio (RN-12). Mientras tanto, F siempre es aleatorio.
-  const iniciarPartida = (_configuracion) => {
-    iniciar()
+  // RF-06 (CU-03): `configuracion` es { modo, valor } (MODO_PISO en componentes/opciones.js).
+  // Con F elegido y válido se inicia la partida con ese F (sigue oculto); si no, no se inicia y se devuelve
+  // el mensaje de error. «Reiniciar» no conserva F: genera uno aleatorio nuevo (RN-12).
+  const iniciarPartida = ({ modo, valor }) => {
+    if (modo !== MODO_PISO.ELEGIDO) {
+      iniciar()
+      return null
+    }
+    const pisoCritico = EDIFICIO.interpretarPiso(valor)
+    if (pisoCritico === null) {
+      return ERROR_PISO_CRITICO
+    }
+    iniciar({ pisoCritico })
     return null
   }
 
